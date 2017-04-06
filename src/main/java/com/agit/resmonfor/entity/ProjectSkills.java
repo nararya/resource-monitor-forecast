@@ -11,19 +11,25 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "member_skills")
-public class MemberSkill {
+@Table(name = "project_skills")
+public class ProjectSkills {
+
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private long id;
 
-	@Column(name = "member_id")
-	private long memberId;
+	@Column(name = "project_id")
+	private long projectId;
 
 	@Column(name = "skill_id")
 	private long skillId;
+
+	@Column(name = "level")
+	private long level;
+
 	
-	@Column(name = "skill_level")
-	private String level;
+	@Column(name = "employee_id")
+	private long employeeId;
+
 }
