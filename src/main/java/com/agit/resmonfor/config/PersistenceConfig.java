@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = {"com.agit.testapp.repository"})
+@EnableJpaRepositories(basePackages = {"com.agit.resmonfor.repository"})
 class PersistenceConfig {
 
 	   @Bean

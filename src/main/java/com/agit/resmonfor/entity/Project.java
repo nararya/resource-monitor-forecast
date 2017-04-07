@@ -18,10 +18,10 @@ public class Project {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	private long id;
+	private Integer id;
 	
     @Column(name = "client_id")
-    private long clientId;
+    private Integer clientId;
     
     @Column(name = "project_name")
     private String projectName;
@@ -32,8 +32,11 @@ public class Project {
     @Column(name = "end_date")
     private Date endDate;
     
+    @Column(name = "value")
+    private Long value;
+        
     @Column(name = "priority")
-    private int priority;
+    private Integer priority;
 
     @Column(name = "status")
     private String status;

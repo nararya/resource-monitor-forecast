@@ -17,19 +17,18 @@ public class ProjectSkills {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	private long id;
+	private Integer id;
 
 	@Column(name = "project_id")
-	private long projectId;
+	private Integer projectId;
 
 	@Column(name = "skill_id")
-	private long skillId;
+	private Integer skillId;
 
 	@Column(name = "level")
-	private long level;
-
+	private Integer level;
 	
 	@Column(name = "employee_id")
-	private long employeeId;
+	private Integer employeeId;
 
 }

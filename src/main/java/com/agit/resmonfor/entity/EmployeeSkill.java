@@ -16,13 +16,13 @@ public class EmployeeSkill {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	private long id;
+	private Integer id;
 
 	@Column(name = "employee_id")
-	private long memberId;
+	private Integer memberId;
 
 	@Column(name = "skill_id")
-	private long skillId;
+	private Integer skillId;
 	
 	@Column(name = "skill_level")
 	private String level;
