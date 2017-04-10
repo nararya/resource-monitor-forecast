@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" th:include="main-layout :: page">
+<head>
+<title>RMF - Employee</title>
+</head>
+
+<body>
+	<div th:fragment="content">
+		<h1>Employee</h1>
+		<div id="employee-table"></div>
+	</div>
+	
+	<div th:fragment="scripts">
+		<script th:src="@{/scripts/pages/employee.js}"></script>
+	</div>
+</body>
+
+</html>

@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
 	@RequestMapping(value = "/")
-    public String getExam(@PathVariable("code") String code, Model model) {
-		return "home";
+    public String homePage() {
+		return "pages/home";
+	}
+	
+	@RequestMapping(value = "/employee")
+    public String employeePage() {
+		return "pages/employee";
 	}
 }
