@@ -2,9 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.agit</groupId>
-	<artifactId>resource-monitor-forecast</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>resmonfor</artifactId>
+	<version>0.1</version>
 	<name>Resource Monitor Forecast</name>
+	<packaging>jar</packaging>
+
+	<parent>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-parent</artifactId>
+	    <version>1.4.2.RELEASE</version>
+	</parent>
 
 	<dependencyManagement>
 		<dependencies>
@@ -77,6 +84,15 @@
 			<version>1.7.22</version>
 		</dependency>
 
-
 	</dependencies>
-</project>
+
+  <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+ 
+ </project>
