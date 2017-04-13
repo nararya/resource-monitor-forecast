@@ -29,7 +29,7 @@ var Table = function(parameters){
    container.append('<div class="paging"></div>');
    container.append('\
       <div>\
-         <table>\
+         <table class="table">\
             <thead></thead>\
             <tbody></tbody>\
          </table>\
@@ -45,24 +45,47 @@ var Table = function(parameters){
          headTr.append('<td>'+column.label+'</td>')
       });
       table.head.append(headTr);
-   }
+   }   
    
    //Private functions - Renders
+   var renderCell = function(row, column){
+      var td = $('<td></td>');
+      if(column.buttons){
+         
+         var buttonGroup = $('<div class="btn-group"></div>');
+         column.buttons.forEach(function(button){
+            var buttonElement = $('<button type="button" class="btn btn-secondary"></button>');
+            buttonElement.append(button.label);
+            buttonElement.on('click', button.behaviour.bind(this,row));
+            buttonGroup.append(buttonElement);
+         });
+         td.append(buttonGroup);
+      } else {
+         td.append(row[column.field]);
+      }
+      return td;               
+
+   }
+
+   
    var renderRow = function(row, columns){
       var tr = $('<tr></tr>');
       columns.forEach(function(column){
-         var cellValue = row[column.field];
-         tr.append('<td>'+cellValue+'</td>')
+         var td = renderCell(row,column);
+         tr.append(td);
       });      
       return tr;
    };
    
    var renderTable = function(){
       var temporaryTbody = $('<tbody></tbody>');
+      console.log('---');
       tableData.content.forEach(function(row){
+         console.log(row);
          var tr = renderRow(row, columns);
          temporaryTbody.append(tr);
       });
+      table.body = container.find("tbody");
       table.body.replaceWith(temporaryTbody);
    };
    
