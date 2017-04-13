@@ -7,8 +7,20 @@
 
 <body>
 	<div th:fragment="content">
+		
 		<h1>Employee</h1>
-		<div id="employee-table"></div>
+		
+		<div class="row">
+			<div class="col-12">
+				<button type="button" class="btn btn-primary submit-button" onclick="employeeForm.load()">Add Employee</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				<div id="employee-table"></div>
+			</div>
+		</div>	
 	</div>
 	
 	<div th:fragment="scripts">

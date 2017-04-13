@@ -112,9 +112,10 @@ var Form = function(parameters){
       if(modal){
          container.modal();
       }
-      fields.forEach(function(field){
-         field.inputElement.val(data[field.referTo]);
-      });
-   
+      if(data){
+         fields.forEach(function(field){
+            field.inputElement.val(data[field.referTo]);
+         });
+      }
    }
 }
