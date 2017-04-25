@@ -1,60 +1,90 @@
 var Table = function(parameters){
    if(!$){
-      console.error("Cannot Find jQuery");
+      console.error("Cannot Find jQuery.");
       return;
    }
+   
+   //Check Parameters
+   if(!parameters.containerId){
+      console.error("The parameter 'containerId' is not set.");
+      return;
+   }
+   if(!parameters.columns){
+      console.error("The parameter 'column' is not set.");
+      return;
+   }
+
    
    //Set parameters
-   var url = parameters.url;
-   var container = parameters.container;
-   var columns = parameters.columns;
-   var page = parameters.page || 0;
-   var size = parameters.size || 20;
-   
+   var url         = parameters.url;
+   var containerId = parameters.containerId;
+   var columns     = parameters.columns;
+   var tableData   = parameters.tableData;
+   var subTables   = parameters.subTables;
+
+   var page      = parameters.page || 0;
+   var size      = parameters.size || 20;
+
    //Private variables
-   var tableData;
+   var container;
    var paging;
-   var table = [];
+   var tableHead;
+   var tableBody;
    
-   if(!container.match(/^#.+/)){
-      container = '#' + container;
-   }
+ //Private functions - Subtables
+   var renderSubTable = function(subTable, row){
+      var subTableId   = Math.random().toString(36).replace(/0\./g,'');
+      var subTableData = row[subTable.data];
+      
+      if(subTableData && subTableData.length > 0){
+         row.element.after('<tr><td colspan="' + columns.length + '"><div id="'+subTableId+'"></div></td></tr>');
+      }
+      //TODO finish Subtable
+   };
    
-   if(!$(container)){
-      console.error("Cannot locate container for table: " + container);
-      return;
-   }
-   
-   container = $(container);
-   container.append('<div class="paging"></div>');
-   container.append('\
-      <div>\
-         <table class="table">\
-            <thead></thead>\
-            <tbody></tbody>\
-         </table>\
-      </div>');
-   container.append('<div class="paging"></div>');
-   paging = container.find(".paging");
-   table.head = container.find("thead");
-   table.body = container.find("tbody");
-   
-   {
+   var renderSubTables = function(row){
+      if(subTables){
+         subTables.forEach(function(subTable){
+            renderSubTable(subTable, row);
+         })
+      }
+   };
+
+   //Private functions - Renders   
+   var renderBase = function(){
+      container = $('#' + containerId);
+      if(!container.length){
+         console.error("Can't find html element with the id: " + containerId);
+         container = false;
+      }
+      
+      container.append(
+      '<div class="paging"></div>'+ 
+      '<div>'+
+      '  <table class="table table-sm">'+
+      '    <thead></thead>'+
+      '    <tbody></tbody>'+
+      '  </table>'+
+      '</div>'+
+      '<div class="paging"></div>');
+      
+      paging    = container.find(".paging");
+      tableHead = container.find("thead");
+      tableBody = container.find("tbody");
+      
       var headTr = $('<tr></tr>');
       columns.forEach(function(column){
          headTr.append('<td>'+column.label+'</td>')
       });
-      table.head.append(headTr);
-   }   
+      tableHead.append(headTr); 
+   }
    
-   //Private functions - Renders
    var renderCell = function(row, column){
       var td = $('<td></td>');
       if(column.buttons){
-         
          var buttonGroup = $('<div class="btn-group"></div>');
          column.buttons.forEach(function(button){
-            var buttonElement = $('<button type="button" class="btn btn-secondary"></button>');
+            var buttonElement = $('<button type="button" class="btn btn-sm"></button>');
             buttonElement.append(button.label);
             buttonElement.on('click', button.behaviour.bind(this,row));
             buttonGroup.append(buttonElement);
@@ -69,33 +99,38 @@ var Table = function(parameters){
 
    
    var renderRow = function(row, columns){
-      var tr = $('<tr></tr>');
+      row.element = $('<tr></tr>');
       columns.forEach(function(column){
          var td = renderCell(row,column);
-         tr.append(td);
+         row.element.append(td);
       });      
-      return tr;
    };
    
    var renderTable = function(){
       var temporaryTbody = $('<tbody></tbody>');
-      console.log('---');
       tableData.content.forEach(function(row){
-         console.log(row);
-         var tr = renderRow(row, columns);
-         temporaryTbody.append(tr);
+         renderRow(row, columns);
+         temporaryTbody.append(row.element);
+         renderSubTables(row);
       });
-      table.body = container.find("tbody");
-      table.body.replaceWith(temporaryTbody);
+      tableBody = container.find("tbody");
+      tableBody.replaceWith(temporaryTbody);
    };
    
    var renderPaging = function(){
       
    }
+   
 
    var render = function(){
-      renderTable();
-      renderPaging();
+      if(!container){
+         renderBase();
+      }
+      
+      if(container){
+         renderTable();
+         renderPaging();         
+      }
    }
    
    //Private functions -- Setters   
@@ -109,10 +144,15 @@ var Table = function(parameters){
    
    
    //Public functions
-   this.load = function(){
-      $.get(url, function(data){
-         setTableData(data);
+   this.load = function(localData){
+      if(localData){
+         setTableData(localData);
          render();
-      }.bind(this));
+      } else {
+         $.get(url, function(data){
+            setTableData(data);
+            render();
+         }.bind(this));
+      }
    }
 };

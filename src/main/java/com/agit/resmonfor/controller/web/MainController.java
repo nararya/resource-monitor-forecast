@@ -17,4 +17,9 @@ public class MainController {
     public String employeePage() {
 		return "pages/employee";
 	}
+	
+	@RequestMapping(value = "/skill")
+    public String skillPage() {
+		return "pages/skill";
+	}
 }

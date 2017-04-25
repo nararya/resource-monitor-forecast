@@ -2,28 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org" th:include="main-layout :: page">
 <head>
-<title>RMF - Employee</title>
+<title>RMF - Skill</title>
 </head>
 
 <body>
 	<div th:fragment="content">
 		
-		<h1>
-			Employee 
-			<button type="button" class="btn btn-primary submit-button" onclick="employeeForm.load()">
-				Add
-			</button>
-		</h1>
-				
+		<h1>Skills</h1>
+		
 		<div class="row">
 			<div class="col-12">
-				<div id="employee-table"></div>
+				<button type="button" class="btn btn-primary submit-button" onclick="skillForm.load()">Add Skill</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				<div id="skill-table"></div>
 			</div>
 		</div>	
 	</div>
 	
 	<div th:fragment="scripts">
-		<script th:src="@{/scripts/pages/employee.js}"></script>
+		<script th:src="@{/scripts/pages/skill.js}"></script>
 	</div>
 </body>
 

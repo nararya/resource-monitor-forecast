@@ -19,11 +19,11 @@ public class EmployeeSkill {
 	private Integer id;
 
 	@Column(name = "employee_id")
-	private Integer memberId;
+	private Integer employeeId;
 
 	@Column(name = "skill_id")
 	private Integer skillId;
 	
 	@Column(name = "skill_level")
-	private String level;
+	private String skillLevel;
 }

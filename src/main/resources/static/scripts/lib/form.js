@@ -1,6 +1,6 @@
 var modalTemplate = 
 '<div class="modal fade">'+
-'  <div class="modal-dialog">'+
+'  <div class="modal-dialog modal-lg">'+
 '    <div class="modal-content">'+
 '      <div class="modal-header">'+
 '        <h5 class="modal-title">{{title}}</h5>'+
@@ -55,19 +55,74 @@ var Form = function(parameters){
       console.error("Cannot locate container for form: " + container);
       return;
    }
+
+   var getOptionsFromObject = function(field) {
+      field.options.forEach(function(option){
+         field.inputElement.append('<option value="' + option.value + '">' + option.text + '</option>');
+      });
+   }
+
    
+   var getOptionsFromUrl = function(field) {
+      field.inputElement.append('<option value=""/>Loading Select</option>');
+      
+      if(!field.optionValue) {
+         console.error("No optionValue is set for field");
+         return;
+      }
+      
+      if(!field.optionText) {
+         console.error("No optionText is set for field");
+         return
+      }
+      
+      $.ajax({
+         url: field.optionUrl,
+         method:'GET',
+         success: function(data){
+            field.inputElement.empty();
+            data.forEach(function(datum){
+               field.inputElement.append('<option value="' + datum[field.optionValue]+ '">' + datum[field.optionText] + '</option>')
+            });
+         }
+      });
+      
+   };
+      
    var renderField = function (field){
-      var formGroupRow = $('<div class="form-group row"></div>');
+      var inputDiv = formElement;
+      
       if(field.type!='hidden'){
-         formGroupRow.append('<label for="'+ field.id +'" class="col-'+ labelWidth +' col-form-label">' + field.label + '</label>');
+         var formGroupRow = $('<div class="form-group row"></div>');
+         formGroupRow.append(
+            '<label for="'+ field.id +'" class="col-'+ labelWidth +' col-form-label">' + 
+                field.label + 
+            '</label>');
+         inputDiv = $('<div class="col-'+fieldWidth+'"></div>').appendTo(formGroupRow);
       }
       
       switch(field.type){
-         case "text" : 
-         case "hidden" : {
-            var inputDiv = $('<div class="col-'+fieldWidth+'"></div>').appendTo(formGroupRow);
+         case "select" : 
+            field.inputElement = $('<select class="custom-select">').appendTo(inputDiv);
+            if(field.options) {
+               getOptionsFromObject(field);
+            } else if (field.optionUrl) {
+               getOptionsFromUrl(field);
+            } else {
+               console.error("No options nor optionUrl is defined for the field.");
+            }            
+            formElement.append(formGroupRow);
+            break; 
+         case "text" : {
             field.inputElement = $('<input class="form-control" type="'+field.type+'">').appendTo(inputDiv);
             formElement.append(formGroupRow);
+            break;
+         }
+         case "hidden" : {
+            field.inputElement = $('<input class="form-control" type="'+field.type+'">').appendTo(inputDiv);
+            break;
+         }
+         default: {
             break;
          }
       }
@@ -115,6 +170,10 @@ var Form = function(parameters){
       if(data){
          fields.forEach(function(field){
             field.inputElement.val(data[field.referTo]);
+         });
+      } else {
+         fields.forEach(function(field){
+            field.inputElement.val('');
          });
       }
    }
