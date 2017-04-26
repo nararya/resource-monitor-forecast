@@ -5,41 +5,52 @@ var Table = function(parameters){
    }
    
    //Check Parameters
-   if(!parameters.containerId){
-      console.error("The parameter 'containerId' is not set.");
+   if(!parameters.container && !parameters.containerId){
+      console.error("Neither 'container' or 'containerId' is set.");
       return;
    }
    if(!parameters.columns){
-      console.error("The parameter 'column' is not set.");
+      console.error("The parameter 'columns' is not set.");
       return;
    }
 
    
    //Set parameters
    var url         = parameters.url;
+   var container   = parameters.container;
    var containerId = parameters.containerId;
    var columns     = parameters.columns;
    var tableData   = parameters.tableData;
    var subTables   = parameters.subTables;
-
+   var usePaging   = parameters.usePaging;
+   
    var page      = parameters.page || 0;
    var size      = parameters.size || 20;
 
    //Private variables
-   var container;
    var paging;
    var tableHead;
    var tableBody;
    
  //Private functions - Subtables
    var renderSubTable = function(subTable, row){
-      var subTableId   = Math.random().toString(36).replace(/0\./g,'');
       var subTableData = row[subTable.data];
       
       if(subTableData && subTableData.length > 0){
-         row.element.after('<tr><td colspan="' + columns.length + '"><div id="'+subTableId+'"></div></td></tr>');
+         var tr           = $('<tr></tr>');
+         var td           = $('<td colspan="' + columns.length + '"></td>').appendTo(tr);
+         var subContainer = $('<div class="subtable-container"></div>').appendTo(td);
+
+         subTable.container = subContainer;
+         subTable.tableData = subTableData;
+         
+         row.subTable = new Table(subTable);
+         row.subTable.load();
+         row.element.after(tr);
       }
-      //TODO finish Subtable
+      
+      
+      
    };
    
    var renderSubTables = function(row){
@@ -52,12 +63,13 @@ var Table = function(parameters){
 
    //Private functions - Renders   
    var renderBase = function(){
-      container = $('#' + containerId);
-      if(!container.length){
-         console.error("Can't find html element with the id: " + containerId);
-         container = false;
+      if(!container) {
+         container = $('#' + containerId);         
+         if(!container.length){
+            console.error("Can't find html element with the id: " + containerId);
+            container = false;
+         }
       }
-      
       container.append(
       '<div class="paging"></div>'+ 
       '<div>'+
@@ -107,8 +119,12 @@ var Table = function(parameters){
    };
    
    var renderTable = function(){
+      var rows = tableData;
       var temporaryTbody = $('<tbody></tbody>');
-      tableData.content.forEach(function(row){
+      if(tableData.content){
+         rows = tableData.content;
+      }
+      rows.forEach(function(row){
          renderRow(row, columns);
          temporaryTbody.append(row.element);
          renderSubTables(row);
@@ -123,7 +139,7 @@ var Table = function(parameters){
    
 
    var render = function(){
-      if(!container){
+      if(!tableHead || !tableBody){
          renderBase();
       }
       
@@ -136,7 +152,11 @@ var Table = function(parameters){
    //Private functions -- Setters   
    var setTableData = function(data){
       var rownum = page * size + 1;      
-      data.content.forEach(function(row){
+      var rows = data;
+      if(data.content) {
+         rows = data.content;
+      }
+      rows.forEach(function(row){
          row['$ROWNUM'] = rownum++;
       });
       tableData = data;
@@ -144,15 +164,15 @@ var Table = function(parameters){
    
    
    //Public functions
-   this.load = function(localData){
-      if(localData){
-         setTableData(localData);
-         render();
-      } else {
+   this.load = function(){
+      if(url){
          $.get(url, function(data){
             setTableData(data);
             render();
          }.bind(this));
+      } else {
+         setTableData(tableData);
+         render();
       }
    }
 };

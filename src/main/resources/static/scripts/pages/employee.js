@@ -1,5 +1,23 @@
 var employeeSkillTable = {
-   data: 'skills'
+   data: 'skills',
+   columns: [{ 
+      label: 'No.',
+      field: '$ROWNUM'
+   }, {
+      label: 'Name',
+      field: 'skillName'
+   }, {
+      label: 'Level',
+      field: 'skillLevel'
+   }, {
+      label: 'Action',
+      buttons: [{
+         label: 'Edit',
+         behaviour: function(row){
+            employeeSkillForm.load(row);
+         }
+      }]
+   }]
 }
 
 var employeeTable = new Table({
